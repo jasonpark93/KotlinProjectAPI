@@ -1,13 +1,12 @@
 package service.model.meta
 
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Service
 class ReplaceKeyService(val replaceKeyRepository: ReplaceKeyRepository) {
-//    @Transactional
+    //    @Transactional
     fun insertData(data: ReplaceKey): Mono<ReplaceKey> {
         return if (data.title != null) {
             data.count += 1
