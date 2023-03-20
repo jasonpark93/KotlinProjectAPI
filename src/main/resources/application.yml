@@ -1,9 +1,11 @@
 spring:
+  jpa:
+    defer-datasource-initialization:true
   codec:
     max-in-memory-size: 10MB
   r2dbc:
     initialization-mode: always
-    url: r2dbc:h2:mem:///moai_meta?options=DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+    url: r2dbc:h2:mem:///replace_key?options=DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
   h2:
     console:
       enabled: true
@@ -16,3 +18,4 @@ logging:
 server:
   port: 8080
   shutdown: graceful
+

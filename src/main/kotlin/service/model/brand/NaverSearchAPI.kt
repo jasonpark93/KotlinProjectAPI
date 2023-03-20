@@ -1,11 +1,6 @@
 package service.model.brand
 
-import com.oracle.javafx.jmx.json.JSONException
-import org.json.JSONObject
 import org.springframework.stereotype.Service
-import java.io.UnsupportedEncodingException
-import java.net.URLEncoder
-import java.util.HashMap
 
 @Service
 class NaverSearchAPI : SearchAPI {
@@ -20,7 +15,4 @@ class NaverSearchAPI : SearchAPI {
         "X-Naver-Client-Id" to clientId,
         "X-Naver-Client-Secret" to clientSecret
     )
-
-
-
 }

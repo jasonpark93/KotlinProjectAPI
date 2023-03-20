@@ -1,4 +1,4 @@
-package service.controller
+package service.service.controller
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

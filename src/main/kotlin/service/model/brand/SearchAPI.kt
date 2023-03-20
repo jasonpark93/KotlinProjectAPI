@@ -4,7 +4,6 @@ import com.oracle.javafx.jmx.json.JSONException
 import org.json.JSONObject
 import java.io.*
 import java.net.HttpURLConnection
-import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLEncoder
 
@@ -32,7 +31,6 @@ interface SearchAPI {
             for ((key, value) in requestHeaders) {
                 con.setRequestProperty(key, value)
             }
-
             val responseCode = con.responseCode
             return if (responseCode == HttpURLConnection.HTTP_OK) {
                 readBody(con.inputStream)
@@ -40,7 +38,7 @@ interface SearchAPI {
                 readBody(con.errorStream)
             }
         } catch (e: IOException) {
-            throw RuntimeException("API request and response failed", e)
+            return "Failed to connect to API URL $apiUrl"
         } finally {
             con.disconnect()
         }
@@ -66,19 +64,20 @@ interface SearchAPI {
         var jsonObject: JSONObject? = null
         val list = mutableListOf<String>()
         try {
+            if (!responseBody.contains(arrayKey)) return list
             jsonObject = JSONObject(responseBody)
-            println(jsonObject)
             val jsonArray = jsonObject.getJSONArray(arrayKey)
-
             for (i in 0 until jsonArray.length()) {
                 val item = jsonArray.getJSONObject(i)
                 title = item.getString(titleName)
                 list.add(title)
-                println("TITLE : $title")
             }
             jsonArray
         } catch (e: JSONException) {
-            e.printStackTrace()
+            // Print the error message or log it
+            println("Error parsing data: ${e.message}")
+            // Return an empty list to avoid stopping the program
+            return list
         }
         return list
     }

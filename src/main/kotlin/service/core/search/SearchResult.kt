@@ -1,13 +1,13 @@
-package service.model.brand
+package service.service.core.search
 
 import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
-import java.util.concurrent.ConcurrentHashMap
+import service.model.brand.SearchAPI
 
 @Service
-class ResultAPI(
-    private val apis: List<SearchAPI>,
+class SearchResult(
+    val apis: List<SearchAPI>,
     private val cacheManager: CacheManager
 ) {
 
@@ -17,7 +17,6 @@ class ResultAPI(
 
         val cachedResult = cache?.get(cacheKey, String::class.java)
         if (cachedResult != null) {
-            println("cache")
             return Mono.just(cachedResult)
         }
 
@@ -30,8 +29,6 @@ class ResultAPI(
     fun resultString(title: String): String {
         val first = getFilteredResults(apis[0], title)
         val second = getFilteredResults(apis[1], title)
-        println(first)
-        println(second)
         return sumStringList(first, second).toString()
     }
 
@@ -43,7 +40,9 @@ class ResultAPI(
 
     fun filterString(str: String): String {
         val regex = Regex("<[^>]*>")
+        // 띄어쓰기 이후에는 제거하고 비교했다
         return str.split(" ")[0].replace(regex, "")
+//        return str.replace(regex, "")
     }
 
     fun sumStringList(list1: List<String>, list2: List<String>): MutableSet<String> {
@@ -55,22 +54,5 @@ class ResultAPI(
         result.addAll(list2)
 
         return result
-    }
-
-    private val concurrentMap = ConcurrentHashMap<String, Int>()
-
-    fun add(str: String): Mono<String> {
-        return Mono.fromCallable {
-            concurrentMap.compute(str) { _, count -> count?.plus(1) ?: 1 }
-            concurrentMap.toString()
-        }
-    }
-
-    fun print(): Mono<String> {
-        return Mono.fromCallable {
-            concurrentMap.toList()
-                .sortedByDescending { (_, value) -> value }
-                .toMap().toString()
-        }
     }
 }

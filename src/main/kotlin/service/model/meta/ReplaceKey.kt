@@ -7,6 +7,6 @@ import org.springframework.data.relational.core.mapping.Table
 class ReplaceKey(
     @Id
     var id: Long = 0L,
-    val title: String,
+    var title: String,
     var count: Long = 1
 )
