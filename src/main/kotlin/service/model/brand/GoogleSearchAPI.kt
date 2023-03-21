@@ -1,7 +1,6 @@
 package service.service.model.brand
 
 import org.springframework.stereotype.Service
-import service.model.brand.SearchAPI
 
 @Service
 class GoogleSearchAPI : SearchAPI {

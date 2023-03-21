@@ -1,6 +1,7 @@
 package service.model.brand
 
 import org.springframework.stereotype.Service
+import service.service.model.brand.SearchAPI
 
 @Service
 class NaverSearchAPI : SearchAPI {

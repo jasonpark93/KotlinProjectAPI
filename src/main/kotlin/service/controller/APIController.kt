@@ -17,7 +17,7 @@ import java.util.*
 
 @RestController
 class APIController(
-    private val h2CountRepository: H2CountRepository,
+    private val countRepository: H2CountRepository,
     cacheManager: CacheManager
 ) {
     // 구글이 새로 생겨도 최소한으로 바꿀수 있게 수정
@@ -27,7 +27,7 @@ class APIController(
     @GetMapping("/search")
     fun search(@RequestBody param: Map<String, String>): Mono<ResponseEntity<String>> {
         val title = param["title"].orEmpty()
-        return h2CountRepository.addCount(ReplaceKey(title = title))
+        return countRepository.addCount(ReplaceKey(title = title))
             .flatMap { searchResult.allPrintMono(title) }
             .map { result ->
                 ResponseEntity.status(HttpStatus.OK).headers(HttpHeaders.EMPTY)
@@ -37,7 +37,7 @@ class APIController(
 
     @GetMapping("/getCount")
     fun getCount(): Mono<ResponseEntity<String>> {
-        return h2CountRepository.getCount().map {
+        return countRepository.getCount().map {
             ResponseEntity.status(HttpStatus.OK).headers(HttpHeaders.EMPTY)
                 .body(it)
         }

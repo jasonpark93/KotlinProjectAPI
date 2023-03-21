@@ -10,25 +10,27 @@ import service.model.meta.ReplaceKeyRepository
 class H2CountRepository(val replaceKeyRepository: ReplaceKeyRepository) : CountRepository {
     @Transactional
     override fun addCount(data: ReplaceKey): Mono<ReplaceKey> {
-        return replaceKeyRepository.findByTitle(data.title)
-            .flatMap { existingData ->
-                existingData.count += 1
-                replaceKeyRepository.save(existingData)
-            }
-            .switchIfEmpty(replaceKeyRepository.save(data))
+        return Mono.defer {
+            replaceKeyRepository.findByTitle(data.title)
+                .flatMap { existingData ->
+                    existingData.count += 1
+                    replaceKeyRepository.save(existingData)
+                }
+                .switchIfEmpty(replaceKeyRepository.save(data))
+        }
     }
 
     override fun getCount(): Mono<String> {
-        return replaceKeyRepository.findAll()
-            .sort(compareByDescending(ReplaceKey::count))
-            .take(10)
-            .collectList()
+        return Mono.defer {
+            replaceKeyRepository.findAll()
+                .collectList()
+                .flatMap { list -> Mono.just(list) }
+        }
             .map { list ->
-                list.joinToString(
-                    prefix = "[",
-                    postfix = "]",
-                    separator = ", "
-                ) { "${it.title}=${it.count}" }
+                list.sortedByDescending(ReplaceKey::count)
+                    .take(10)
+                    .map { "${it.title}=${it.count}" }
+                    .joinToString(prefix = "[", postfix = "]", separator = ", ")
             }
     }
 }

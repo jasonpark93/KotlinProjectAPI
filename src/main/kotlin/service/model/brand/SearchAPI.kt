@@ -1,11 +1,9 @@
-package service.model.brand
+package service.service.model.brand
 
 import com.oracle.javafx.jmx.json.JSONException
 import org.json.JSONObject
-import java.io.*
-import java.net.HttpURLConnection
-import java.net.URL
-import java.net.URLEncoder
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
 
 interface SearchAPI {
 
@@ -15,51 +13,30 @@ interface SearchAPI {
     val titleName: String
     val requestHeaders: Map<String, String>
 
-    fun connect(apiUrl: String): HttpURLConnection {
-        try {
-            val url = URL(apiUrl)
-            return url.openConnection() as HttpURLConnection
-        } catch (e: IOException) {
-            throw RuntimeException("Failed to connect to API URL: $apiUrl", e)
-        }
+    fun WebClient.Builder.setDefaultHeaders(defaultHeaders: Map<String, String>): WebClient.Builder {
+        defaultHeaders.forEach { (key, value) -> this.defaultHeader(key, value) }
+        return this
     }
 
-    fun get(apiUrl: String, requestHeaders: Map<String, String>): String {
-        val con = connect(apiUrl)
-        try {
-            con.requestMethod = "GET"
-            for ((key, value) in requestHeaders) {
-                con.setRequestProperty(key, value)
-            }
-            val responseCode = con.responseCode
-            return if (responseCode == HttpURLConnection.HTTP_OK) {
-                readBody(con.inputStream)
-            } else {
-                readBody(con.errorStream)
-            }
-        } catch (e: IOException) {
-            return "Failed to connect to API URL $apiUrl"
-        } finally {
-            con.disconnect()
-        }
+    fun get(apiUrl: String, requestHeaders: Map<String, String>): Mono<String> {
+        return WebClient.builder()
+            .setDefaultHeaders(requestHeaders)
+            .build()
+            .get()
+            .uri(apiUrl)
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .onErrorResume { Mono.just("Failed to connect to API URL $apiUrl") }
     }
 
-    private fun readBody(body: InputStream): String {
-        return body.reader().use { it.readText() }
+    fun API(title: String): Mono<List<String>> {
+        val apiUrl = apiUrlTemplate + title
+        return get(apiUrl, requestHeaders)
+            .map { parseData(it) }
+            .defaultIfEmpty(emptyList())
     }
 
-    fun API(str: String): MutableList<String> {
-        var text: String? = null
-        try {
-            text = URLEncoder.encode(str, "UTF-8")
-        } catch (e: UnsupportedEncodingException) {
-            throw RuntimeException("Failed to encode query", e)
-        }
-        val responseBody = get(apiUrlTemplate + text!!, requestHeaders)
-        return parseData(responseBody)
-    }
-
-    fun parseData(responseBody: String): MutableList<String> {
+    fun parseData(responseBody: String): List<String> {
         var title: String
         var jsonObject: JSONObject? = null
         val list = mutableListOf<String>()
