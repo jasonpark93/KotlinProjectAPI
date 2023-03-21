@@ -23,6 +23,7 @@ curl --location --request GET 'http://localhost:8080/getCount' \
 [족발=2, 피자=1]
 ```
 
+
 ## 코드 설명
 ### APIController
 
@@ -45,15 +46,13 @@ fun getCount()
 - 둘 모두 구현했지만 현재는 H2 사용 (InMemory가 무한으로 늘어날 가능성으로 oom 이슈가 있을 수도 있어서 h2를 사용)
 
 
+
 ## 기술적 요구사항
-### 지속적 유지 보수 및 확장에 용이한 아키텍처
+### 지속적 유지 보수 및 확장에 용이한 아키텍처 , 새로운 검색 API
 - KakaoSearchAPI, NaverSearchAPI 는 SearchAPI 상속 받아 GoogleSearchAPI 등 추가 및 확장 가능
 - H2CountRepository, InMemoryCountRepository 는 CountRepository 상속 받아 최소한의 코드 변경으로 변경 가능
 
-### 동시성 이슈
-- spring webflux 사용으로 적은 리소스로 동시성을 다룰 수 있음
-- defer() 함수를 사용하여 구독이 이루워질 때까지 코드 블록을 lazy 하게 처리 할 수 있도록 구현
-
-### 대용량 트래픽 처리
+### 동시성 이슈, 대용량 트래픽 처리
 - spring webflux 사용으로 mvc보다 적은 수의 리소스로 많은 처리를 가능하게 함
+- defer() 함수를 사용하여 구독이 되기 전까지 코드 블록을 lazy 하게 처리 할 수 있도록 구현
 
