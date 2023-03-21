@@ -38,6 +38,7 @@ class SearchResult(
 
     fun getFilteredResults(api: SearchAPI, title: String): Mono<List<String>> {
         return api.API(title).map { it ->
+            println(it)
             it.map {
                 filterString(it)
             }.distinct().take(5)
@@ -46,8 +47,8 @@ class SearchResult(
 
     fun filterString(str: String): String {
         val regex = Regex("<[^>]*>")
-//        return str.split(" ")[0].replace(regex, "")
-        return str.replace(regex, "")
+        return str.split(" ")[0].replace(regex, "")
+//        return str.replace(regex, "")
     }
 
     fun sumStringList(list1: List<String>, list2: List<String>): MutableSet<String> {
