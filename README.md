@@ -4,7 +4,7 @@
 ## API 테스트 방법
 
 ### 1) 장소 검색
-```aidl
+```
 // input
 curl --location --request GET 'http://localhost:8080/search' \
 --data-raw '{"title": "피자"}'
@@ -14,7 +14,7 @@ curl --location --request GET 'http://localhost:8080/search' \
 ```
 
 ### 2) 검색 키워드 목록
-```aidl
+```
 // input
 curl --location --request GET 'http://localhost:8080/getCount' \
 --data-raw '{"title": "족발"}'
