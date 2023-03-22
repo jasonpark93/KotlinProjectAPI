@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 @Service
 class InMemoryCountRepository : CountRepository {
-    private val concurrentMap = ConcurrentHashMap<String, Int>()
+    private val concurrentMap = ConcurrentHashMap<String, Int>(100000)
 
     override fun addCount(data: ReplaceKey): Mono<ReplaceKey> {
         return Mono.fromCallable {
@@ -20,6 +20,7 @@ class InMemoryCountRepository : CountRepository {
         return Mono.fromCallable {
             concurrentMap.toList()
                 .sortedByDescending { (_, value) -> value }
+                .take(10)
                 .toMap().toString()
         }
     }

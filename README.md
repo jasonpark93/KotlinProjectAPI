@@ -20,7 +20,7 @@ curl --location --request GET 'http://localhost:8080/getCount' \
 --data-raw '{"title": "족발"}'
 
 // output
-[족발=2, 피자=1]
+[은행=11, 양꼬치=8, 쌀국수=5, 피자=5, 떡볶이=5, 김밥=5, 치킨=4, 국밥=4, 양갈비=4, 삼겹살=4]
 ```
 
 
@@ -43,7 +43,7 @@ fun getCount()
 ### countRepository
 - 검색 키워드 목록을 저장하기 위해서 저장소를 구현
 - H2 DB를 이용한 H2CountRepository , InMemory를 이용한 InMemoryCountRepository
-- 둘 모두 구현했지만 현재는 H2 사용 (InMemory가 무한으로 늘어날 가능성으로 oom 이슈가 있을 수도 있어서 h2를 사용)
+- 대용량 트래픽 처리를 위한 RedisCountRepository를 embedded redis를 이용해서 구현
 
 
 
@@ -54,5 +54,6 @@ fun getCount()
 
 ### 동시성 이슈, 대용량 트래픽 처리
 - spring webflux 사용으로 mvc보다 적은 수의 리소스로 많은 처리를 가능하게 함
+- embedded redis로 대용량 트래픽 처리를 할 수 있게 처리, addCount 캐시
 - defer() 함수를 사용하여 구독이 되기 전까지 코드 블록을 lazy 하게 처리 할 수 있도록 구현
 

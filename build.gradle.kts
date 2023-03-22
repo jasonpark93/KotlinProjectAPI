@@ -40,6 +40,10 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
+
+    implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
+    implementation("it.ozimov:embedded-redis:0.7.2")
+
 }
 
 tasks.test {

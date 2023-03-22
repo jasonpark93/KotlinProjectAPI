@@ -11,13 +11,13 @@ import reactor.core.publisher.Mono
 import service.model.brand.KakaoSearchAPI
 import service.model.brand.NaverSearchAPI
 import service.model.meta.ReplaceKey
-import service.service.core.count.H2CountRepository
+import service.service.core.count.RedisCountRepository
 import service.service.core.search.SearchResult
 import java.util.*
 
 @RestController
 class APIController(
-    private val countRepository: H2CountRepository,
+    private val countRepository: RedisCountRepository,
     cacheManager: CacheManager
 ) {
     // 구글이 새로 생겨도 최소한으로 바꿀수 있게 수정
